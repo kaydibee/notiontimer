@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Countdown Timer</title>
+  <style>
+    body {
+      font-family: monospace;
+      text-align: center;
+    }
+    .timer {
+      font-size: 48px;
+      margin-bottom: 20px;
+      color: gray;
+    }
+    .button {
+      font-family: monospace;
+      font-size: 16px;
+      margin: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: gray;
+    }
+  </style>
+</head>
+<body>
+  <div class="timer" id="countdown">20:00</div>
+  <button id="start" class="button">Start</button>
+  <button id="pause" class="button">Pause</button>
+  <button id="reset" class="button">Reset</button>
+
+  <script>
+    let countdownInterval;
+    let remainingTime;
+    let paused = false;
+    const countdownElement = document.getElementById('countdown');
+
+    document.getElementById('start').addEventListener('click', function() {
+      if (countdownInterval) return; // Prevent multiple starts
+      startCountdown(20 * 60); // Start countdown for 20 minutes
+    });
+
+    document.getElementById('pause').addEventListener('click', function() {
+      paused = !paused;
+      this.innerHTML = paused ? 'Resume' : 'Pause';
+    });
+
+    document.getElementById('reset').addEventListener('click', function() {
+      clearInterval(countdownInterval);
+      countdownElement.innerHTML = '20:00';
+      countdownInterval = null;
+      paused = false;
+      document.getElementById('pause').innerHTML = 'Pause';
+    });
+
+    function startCountdown(duration) {
+      const startTime = Date.now();
+      const targetTime = startTime + duration * 1000;
+
+      countdownInterval = setInterval(function() {
+        if (paused) return; // Pause the timer if paused flag is true
+
+        const currentTime = Date.now();
+        remainingTime = targetTime - currentTime;
+
+        if (remainingTime <= 0) {
+          clearInterval(countdownInterval);
+          countdownElement.innerHTML = 'Countdown Complete!';
+          return;
+        }
+
+        const minutes = Math.floor(remainingTime / (1000 * 60));
+        const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+
+        const formattedTime = `${padZero(minutes)}:${padZero(seconds)}`;
+        countdownElement.innerHTML = formattedTime;
+      }, 1000);
+    }
+
+    function padZero(value) {
+      return value < 10 ? `0${value}` : value;
+    }
+  </script>
+</body>
+</html>
