@@ -24,7 +24,7 @@
   </style>
 </head>
 <body>
-  <div class="timer" id="countdown">20:00</div>
+  <div class="timer" id="countdown">01:00</div>
   <button id="start" class="button">Start</button>
   <button id="pause" class="button">Pause</button>
   <button id="reset" class="button">Reset</button>
@@ -37,7 +37,7 @@
 
     document.getElementById('start').addEventListener('click', function() {
       if (countdownInterval) return; // Prevent multiple starts
-      startCountdown(20 * 60); // Start countdown for 20 minutes
+      startCountdown(1 * 60); // Start countdown for 1 minute
     });
 
     document.getElementById('pause').addEventListener('click', function() {
@@ -47,7 +47,7 @@
 
     document.getElementById('reset').addEventListener('click', function() {
       clearInterval(countdownInterval);
-      countdownElement.innerHTML = '20:00';
+      countdownElement.innerHTML = '01:00';
       countdownInterval = null;
       paused = false;
       document.getElementById('pause').innerHTML = 'Pause';
