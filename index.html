@@ -66,6 +66,7 @@
         if (remainingTime <= 0) {
           clearInterval(countdownInterval);
           countdownElement.innerHTML = 'Countdown Complete!';
+          showNotification('Countdown Complete!');
           return;
         }
 
@@ -79,6 +80,18 @@
 
     function padZero(value) {
       return value < 10 ? `0${value}` : value;
+    }
+
+    function showNotification(message) {
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification(message);
+      } else if ('Notification' in window && Notification.permission !== 'denied') {
+        Notification.requestPermission(function (permission) {
+          if (permission === 'granted') {
+            new Notification(message);
+          }
+        });
+      }
     }
   </script>
 </body>
