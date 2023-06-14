@@ -21,23 +21,59 @@
       cursor: pointer;
       color: gray;
     }
+    .arrow {
+      font-size: 24px;
+      cursor: pointer;
+      position: absolute;
+      top: calc(50% - 12px);
+    }
+    #subtract {
+      left: 20px;
+    }
+    #add {
+      right: 20px;
+    }
+    .controls-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   </style>
 </head>
 <body>
-  <div class="timer" id="countdown">01:00</div>
-  <button id="start" class="button">Start</button>
-  <button id="pause" class="button">Pause</button>
-  <button id="reset" class="button">Reset</button>
+  <div class="timer" id="countdown">20:00</div>
+  <div class="controls-container">
+    <span class="arrow" id="subtract">&#9664;</span>
+    <button id="start" class="button">Start</button>
+    <button id="pause" class="button">Pause</button>
+    <button id="reset" class="button">Reset</button>
+    <span class="arrow" id="add">&#9654;</span>
+  </div>
 
   <script>
     let countdownInterval;
     let remainingTime;
     let paused = false;
     const countdownElement = document.getElementById('countdown');
+    const subtractButton = document.getElementById('subtract');
+    const addButton = document.getElementById('add');
+
+    subtractButton.addEventListener('click', function() {
+      if (!countdownInterval && !paused) {
+        subtractTime(1 * 60); // Subtract 1 minute from the countdown
+      }
+    });
+
+    addButton.addEventListener('click', function() {
+      if (!countdownInterval && !paused) {
+        addTime(1 * 60); // Add 1 minute to the countdown
+      }
+    });
 
     document.getElementById('start').addEventListener('click', function() {
       if (countdownInterval) return; // Prevent multiple starts
-      startCountdown(1 * 60); // Start countdown for 1 minute
+      startCountdown(20 * 60); // Start countdown for 20 minutes
     });
 
     document.getElementById('pause').addEventListener('click', function() {
@@ -47,11 +83,34 @@
 
     document.getElementById('reset').addEventListener('click', function() {
       clearInterval(countdownInterval);
-      countdownElement.innerHTML = '01:00';
+      countdownElement.innerHTML = '20:00';
       countdownInterval = null;
       paused = false;
       document.getElementById('pause').innerHTML = 'Pause';
     });
+
+    function subtractTime(seconds) {
+      const currentTime = parseTime(countdownElement.innerHTML);
+      const newTime = Math.max(currentTime - seconds, 0);
+      updateCountdown(newTime);
+    }
+
+    function addTime(seconds) {
+      const currentTime = parseTime(countdownElement.innerHTML);
+      const newTime = currentTime + seconds;
+      updateCountdown(newTime);
+    }
+
+    function updateCountdown(timeInSeconds) {
+      const minutes = Math.floor(timeInSeconds / 60);
+      const seconds = timeInSeconds % 60;
+      countdownElement.innerHTML = `${padZero(minutes)}:${padZero(seconds)}`;
+    }
+
+    function parseTime(timeString) {
+      const [minutes, seconds] = timeString.split(':').map(Number);
+      return minutes * 60 + seconds;
+    }
 
     function startCountdown(duration) {
       const startTime = Date.now();
@@ -66,7 +125,6 @@
         if (remainingTime <= 0) {
           clearInterval(countdownInterval);
           countdownElement.innerHTML = 'Countdown Complete!';
-          showNotification('Countdown Complete!');
           return;
         }
 
@@ -80,18 +138,6 @@
 
     function padZero(value) {
       return value < 10 ? `0${value}` : value;
-    }
-
-    function showNotification(message) {
-      if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification(message);
-      } else if ('Notification' in window && Notification.permission !== 'denied') {
-        Notification.requestPermission(function (permission) {
-          if (permission === 'granted') {
-            new Notification(message);
-          }
-        });
-      }
     }
   </script>
 </body>
